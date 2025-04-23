@@ -159,24 +159,24 @@
 ![Screenshot 2025-04-23 214411](https://github.com/user-attachments/assets/dad16e8b-1ed0-484b-b54f-e360fd2d4531)
 
 ### 7. Kết luận
-1. trg_CapNhatSoDuSauGiaoDich
-🔹 Mục tiêu:
+#### 1. trg_CapNhatSoDuSauGiaoDich
+##### Mục tiêu:
 - Tự động cập nhật số dư tài khoản sau mỗi giao dịch.
 - Tự động tính và ghi nhận số dư sau giao dịch vào trường phi chuẩn SoDuSauGiaoDich.
 - Ngăn chặn và hủy các giao dịch vượt quá hạn mức tuyệt đối cho từng người dùng - danh mục.
-🔹 Lý do:
+##### Lý do:
 - Cải thiện hiệu suất khi xem báo cáo biến động số dư theo thời gian.
 - Đảm bảo tính toàn vẹn dữ liệu tài chính sau mỗi giao dịch.
 
-2. trg_KiemTraHanMuc
-🔹 Mục tiêu:
+#### 2. trg_KiemTraHanMuc
+##### Mục tiêu:
 - Ngăn không cho người dùng thực hiện giao dịch chi tiêu vượt hạn mức đã đặt ra cho từng danh mục.
-🔹 Lý do:
+##### Lý do:
 - Giúp kiểm soát tài chính cá nhân, tránh chi tiêu quá mức cho các mục đích cụ thể.
 
-3. trg_ThongBao_GiaoDichMoi
-🔹 Mục tiêu:
+#### 3. trg_ThongBao_GiaoDichMoi
+##### Mục tiêu:
 - Tự động tạo thông báo cho người dùng mỗi khi có giao dịch mới được thêm.
-🔹 Lý do:
+##### Lý do:
 - Giúp người dùng dễ dàng theo dõi các hoạt động chi tiêu/thu nhập vừa được ghi nhận, hỗ trợ nhắc nhở tài chính.
 # THE END
