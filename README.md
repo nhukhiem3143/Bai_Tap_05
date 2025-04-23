@@ -63,7 +63,7 @@
 ![Screenshot 2025-04-23 174413](https://github.com/user-attachments/assets/09f37e82-80ac-4a36-94b4-983970562d97)
 
 ### Biểu đồ thực thể liên kết
-![Screenshot 2025-04-23 192811](https://github.com/user-attachments/assets/469c4ea7-c13a-4b07-a999-d27ecfa8ca4a)
+![Screenshot 2025-04-23 192811](https://github.com/user-attachments/assets/bd824af0-aff6-4b7d-a0db-e98d74badc61)
 
 ## B. Nội dung Bài tập 05
 ### 1. Trường phi chuẩn: SoDuSauGiaoDich
