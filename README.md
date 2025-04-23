@@ -66,20 +66,35 @@
 ![Screenshot 2025-04-23 192811](https://github.com/user-attachments/assets/bd824af0-aff6-4b7d-a0db-e98d74badc61)
 
 ## B. Nội dung Bài tập 05
-### 1. Trường phi chuẩn: SoDuSauGiaoDich
+### 1. Các trigger được sử dụng
+#### Trigger sử dụng trường phi chuẩn
 - Lý do thêm: Trường này có thể tính toán từ dữ liệu khác, nhưng thêm vào giúp tăng tốc độ truy xuất báo cáo lịch sử số dư theo từng giao dịch.
 - Logic: Truy xuất lịch sử số dư nhanh hơn, tránh phải tính dồn nhiều lần mỗi khi truy vấn.
+##### trg_CapNhatSoDuSauGiaoDich — Tự động cập nhật số dư tài khoản
+- Kiểu trigger: AFTER INSERT, UPDATE
+- Chức năng chính:
+- Kiểm tra xem giao dịch có vượt hạn mức tức thời hay không.
+- Nếu vượt → tạo thông báo và rollback giao dịch.
+- Cập nhật SoDu tài khoản:
+-- Nếu là Thu → cộng tiền.
+- Nếu là Chi → trừ tiền.
+- Cập nhật SoDuSauGiaoDich của bảng GiaoDich theo số dư mới nhất.
+##### trg_KiemTraHanMuc — Kiểm tra hạn mức chi tiêu
+- Loại trigger: INSTEAD OF INSERT
+- Mục tiêu:
+- Chỉ cho phép giao dịch nếu không vượt hạn mức theo tháng (cho từng danh mục và người dùng).
+- Cơ chế:
+- Nếu vượt hạn mức → INSERT vào bảng ThongBao và không thêm giao dịch.
+- Nếu không vượt → cho phép INSERT.
+  
+##### trg_ThongBao_GiaoDichMoi — Gửi thông báo mỗi khi có giao dịch
+- Loại trigger: AFTER INSERT
+- Mục tiêu:
+-- Sau mỗi giao dịch thành công, tự động tạo bản ghi ThongBao với tên danh mục.
+- Cơ chế:
+- Sinh mã thông báo như: TB001, TB002, ...
+- Nội dung: "Giao dịch mới: Ăn uống" hoặc tên danh mục tương ứng.
 
-### 2. Trigger sử dụng trường phi chuẩn
-```sql
--- Cập nhật SoDuSauGiaoDich cho các giao dịch
-UPDATE gd
-SET gd.SoDuSauGiaoDich = tk.SoDu
-FROM GiaoDich gd
-JOIN inserted i ON gd.MaGiaoDich = i.MaGiaoDich
-JOIN TaiKhoan tk ON i.MaTaiKhoan = tk.MaTaiKhoan
-WHERE tk.SoDu IS NOT NULL;
-```
 ### 4. Mục tiêu của Trigger:
 - Tự động cập nhật số dư sau mỗi giao dịch theo thời gian thực
 - Tránh sai sót khi nhập liệu thủ công
@@ -103,6 +118,7 @@ WHERE tk.SoDu IS NOT NULL;
 ![Screenshot 2025-04-23 195838](https://github.com/user-attachments/assets/13907a11-084b-4175-a958-47b4d2b4e8e7)
 
 ### 6. Kết quả
+#### Trigger dùng trường phi chuẩn
 - Người dùng 4 : Trong TK004 có số dư như sau :
 
 ![Screenshot 2025-04-23 200537](https://github.com/user-attachments/assets/bed78e0f-0f15-4882-a933-1c3d41bfbcdd)
@@ -126,13 +142,41 @@ WHERE tk.SoDu IS NOT NULL;
 
 ![Screenshot 2025-04-23 201952](https://github.com/user-attachments/assets/d6c4bb59-b15c-4aa4-a7c1-95dc2ff3912e)
 
-#### *Ngoài ra trong bài còn tự động cập nhật ThongBao tự động mỗi khi có 1 giao dịch mới theo thời gian thực*
-![Screenshot 2025-04-23 202150](https://github.com/user-attachments/assets/2e00789a-8170-4e14-a2f2-557b1600d89a)
+#### Test INSERT thành công (nằm trong hạn mức)
+![Screenshot 2025-04-23 211234](https://github.com/user-attachments/assets/e89d4867-bad4-4977-aa12-c7bb8d8533f1)
+
+#### Kết quả kỳ vọng: Giao dịch thêm thành công, SoDu tài khoản được cập nhật và SoDuSauGiaoDich của GD0016 được set đúng.
+
+![Screenshot 2025-04-23 211921](https://github.com/user-attachments/assets/e9aaf313-4c56-48fb-85fc-45ab0613a9e3)
+
+#### Ngược lại nếu vượt hạn mức
+![Screenshot 2025-04-23 213320](https://github.com/user-attachments/assets/c3c0847f-ee82-454a-a4c1-8eb3b85286f3)
+
+##### Trigger trg_ThongBao_GiaoDichMoi — Gửi thông báo mỗi khi có giao dịch
+
+![Screenshot 2025-04-23 213728](https://github.com/user-attachments/assets/f93b4c3a-12b0-4da0-a56c-24a9aab2e3d1)
+
+![Screenshot 2025-04-23 214411](https://github.com/user-attachments/assets/dad16e8b-1ed0-484b-b54f-e360fd2d4531)
 
 ### 7. Kết luận
-- Trigger trg_CapNhatSoDuSauGiaoDich đã giúp
-- Tự động hóa xử lý logic nghiệp vụ quan trọng
-- Đảm bảo tính nhất quán giữa số dư và giao dịch
-- Hỗ trợ tạo báo cáo tài chính dễ dàng và hiệu quả hơn
+1. trg_CapNhatSoDuSauGiaoDich
+🔹 Mục tiêu:
+- Tự động cập nhật số dư tài khoản sau mỗi giao dịch.
+- Tự động tính và ghi nhận số dư sau giao dịch vào trường phi chuẩn SoDuSauGiaoDich.
+- Ngăn chặn và hủy các giao dịch vượt quá hạn mức tuyệt đối cho từng người dùng - danh mục.
+🔹 Lý do:
+- Cải thiện hiệu suất khi xem báo cáo biến động số dư theo thời gian.
+- Đảm bảo tính toàn vẹn dữ liệu tài chính sau mỗi giao dịch.
 
+2. trg_KiemTraHanMuc
+🔹 Mục tiêu:
+- Ngăn không cho người dùng thực hiện giao dịch chi tiêu vượt hạn mức đã đặt ra cho từng danh mục.
+🔹 Lý do:
+- Giúp kiểm soát tài chính cá nhân, tránh chi tiêu quá mức cho các mục đích cụ thể.
+
+3. trg_ThongBao_GiaoDichMoi
+🔹 Mục tiêu:
+- Tự động tạo thông báo cho người dùng mỗi khi có giao dịch mới được thêm.
+🔹 Lý do:
+- Giúp người dùng dễ dàng theo dõi các hoạt động chi tiêu/thu nhập vừa được ghi nhận, hỗ trợ nhắc nhở tài chính.
 # THE END
